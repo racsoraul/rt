@@ -75,7 +75,55 @@ func TestAdd(t *testing.T) {
 			if err != tc.err {
 				t.Fatalf("error adding tuples. Unexpected err value: %v; wanted: %v", err, tc.err)
 			}
+			if !result.IsEqual(tc.expected) {
+				t.Errorf("got: %v; want: %v", result, tc.expected)
+			}
+		})
+	}
+}
 
+func TestSub(t *testing.T) {
+	testCases := []struct {
+		name                     string
+		inputA, inputB, expected Tuple
+		err                      error
+	}{
+		{
+			"Point - Point = Vector",
+			NewPoint(3, 2, 1),
+			NewPoint(5, 6, 7),
+			NewVector(-2, -4, -6),
+			nil,
+		},
+		{
+			"Point - Vector = Point",
+			NewPoint(3, 2, 1),
+			NewVector(5, 6, 7),
+			NewPoint(-2, -4, -6),
+			nil,
+		},
+		{
+			"Vector - Vector = Vector",
+			NewVector(3, 2, 1),
+			NewVector(5, 6, 7),
+			NewVector(-2, -4, -6),
+			nil,
+		},
+		{
+			"Vector - Point = Error",
+			NewVector(3, 2, 1),
+			NewPoint(5, 6, 7),
+			NewTuple(0, 0, 0, 0),
+			ErrorInvalidSubOp,
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			result, err := Sub(tc.inputA, tc.inputB)
+			if err != tc.err {
+				t.Fatalf("error subtracting tuples. Unexpected err value: %v; wanted: %v", err, tc.err)
+			}
 			if !result.IsEqual(tc.expected) {
 				t.Errorf("got: %v; want: %v", result, tc.expected)
 			}
