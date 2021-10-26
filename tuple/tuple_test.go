@@ -130,3 +130,12 @@ func TestSub(t *testing.T) {
 		})
 	}
 }
+
+func TestNeg(t *testing.T) {
+	v := NewTuple(1, -2, 3, -4)
+	expected := NewTuple(-1, 2, -3, 4)
+	actual := Neg(v)
+	if !actual.IsEqual(expected) {
+		t.Fatalf("got: %v; want: %v", actual, expected)
+	}
+}

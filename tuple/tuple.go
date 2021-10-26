@@ -55,3 +55,8 @@ func Sub(a, b Tuple) (r Tuple, err error) {
 	}
 	return NewTuple(a.X-b.X, a.Y-b.Y, a.Z-b.Z, a.W-b.W), nil
 }
+
+// Neg Negates a tuple.
+func Neg(v Tuple) Tuple {
+	return NewTuple(-v.X, -v.Y, -v.Z, -v.W)
+}
