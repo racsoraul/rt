@@ -1,6 +1,9 @@
 package tuple
 
-import "testing"
+import (
+	"math"
+	"testing"
+)
 
 func TestIsPoint(t *testing.T) {
 	p := NewPoint(4.3, -4.2, 3.1)
@@ -137,5 +140,86 @@ func TestNeg(t *testing.T) {
 	actual := Neg(v)
 	if !actual.IsEqual(expected) {
 		t.Fatalf("got: %v; want: %v", actual, expected)
+	}
+}
+
+func TestScale(t *testing.T) {
+	testCases := []struct {
+		name     string
+		inputA   Tuple
+		inputB   float64
+		expected Tuple
+	}{
+		{
+			"Multiplying tuple by a scalar",
+			NewTuple(1, -2, 3, -4),
+			3.5,
+			NewTuple(3.5, -7, 10.5, -14),
+		},
+		{
+			"Multiplying tuple by a fraction",
+			NewTuple(1, -2, 3, -4),
+			0.5,
+			NewTuple(0.5, -1, 1.5, -2),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := Scale(tc.inputA, tc.inputB)
+			if !actual.IsEqual(tc.expected) {
+				t.Fatalf("got: %v; want: %v", actual, tc.expected)
+			}
+		})
+	}
+}
+
+func TestDiv(t *testing.T) {
+	tuple := NewTuple(1, -2, 3, -4)
+	actual := Div(tuple, 2)
+	expected := NewTuple(0.5, -1, 1.5, -2)
+	if !actual.IsEqual(expected) {
+		t.Fatalf("got: %v; want: %v", actual, expected)
+	}
+}
+
+func TestMag(t *testing.T) {
+	testCases := []struct {
+		name     string
+		input    Tuple
+		expected float64
+	}{
+		{
+			"magnitude of v(1,0,0)",
+			NewVector(1, 0, 0),
+			1,
+		},
+		{
+			"magnitude of v(0,1,0)",
+			NewVector(0, 1, 0),
+			1,
+		},
+		{
+			"magnitude of v(0,0,1)",
+			NewVector(0, 0, 1),
+			1,
+		},
+		{
+			"magnitude of v(1,2,3)",
+			NewVector(1, 2, 3),
+			math.Sqrt(14),
+		},
+		{
+			"magnitude of v(1,2,3)",
+			NewVector(-1, -2, -3),
+			math.Sqrt(14),
+		},
+	}
+
+	for _, tc := range testCases {
+		actual := tc.input.Mag()
+		if actual != tc.expected {
+			t.Fatalf("got: %v; want: %v", actual, tc.expected)
+		}
 	}
 }

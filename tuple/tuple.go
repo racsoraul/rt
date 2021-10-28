@@ -60,3 +60,21 @@ func Sub(a, b Tuple) (r Tuple, err error) {
 func Neg(v Tuple) Tuple {
 	return NewTuple(-v.X, -v.Y, -v.Z, -v.W)
 }
+
+// Scale Scales a tuple by a scalar value.
+func Scale(t Tuple, s float64) Tuple {
+	return NewTuple(t.X*s, t.Y*s, t.Z*s, t.W*s)
+}
+
+// Div Divides a tuple by a scalar value.
+func Div(t Tuple, s float64) Tuple {
+	return NewTuple(t.X/s, t.Y/s, t.Z/s, t.W/s)
+}
+
+// Mag Returns the magnitude of the vector.
+func (t Tuple) Mag() float64 {
+	if t.IsPoint() {
+		return 0
+	}
+	return math.Sqrt(math.Pow(t.X, 2) + math.Pow(t.Y, 2) + math.Pow(t.Z, 2) + math.Pow(t.W, 2))
+}
