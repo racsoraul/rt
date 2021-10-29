@@ -8,8 +8,9 @@ import (
 )
 
 var (
-	ErrorInvalidAddOp = errors.New("invalid Add operation. Point + Point is not allowed")
-	ErrorInvalidSubOp = errors.New("invalid Sub operation. Vector - Point is not allowed")
+	ErrorInvalidAddOp   = errors.New("invalid Add operation. Point + Point is not allowed")
+	ErrorInvalidSubOp   = errors.New("invalid Sub operation. Vector - Point is not allowed")
+	ErrorDivisionByZero = errors.New("division by zero")
 )
 
 // Tuple underlying structure for vector and points.
@@ -66,9 +67,13 @@ func Scale(t Tuple, s float64) Tuple {
 	return NewTuple(t.X*s, t.Y*s, t.Z*s, t.W*s)
 }
 
-// Div Divides a tuple by a scalar value.
-func Div(t Tuple, s float64) Tuple {
-	return NewTuple(t.X/s, t.Y/s, t.Z/s, t.W/s)
+// Div Divides a tuple by a scalar value. Returns ErrorDivisionByZero
+// when s is 0.
+func Div(t Tuple, s float64) (Tuple, error) {
+	if s == 0 {
+		return Tuple{}, ErrorDivisionByZero
+	}
+	return NewTuple(t.X/s, t.Y/s, t.Z/s, t.W/s), nil
 }
 
 // Mag Returns the magnitude of the vector.
@@ -76,5 +81,15 @@ func (t Tuple) Mag() float64 {
 	if t.IsPoint() {
 		return 0
 	}
-	return math.Sqrt(math.Pow(t.X, 2) + math.Pow(t.Y, 2) + math.Pow(t.Z, 2) + math.Pow(t.W, 2))
+	return math.Sqrt(math.Pow(t.X, 2) + math.Pow(t.Y, 2) + math.Pow(t.Z, 2))
+}
+
+// Normalize Normalizes a vector.
+func Normalize(t Tuple) Tuple {
+	return NewVector(t.X/t.Mag(), t.Y/t.Mag(), t.Z/t.Mag())
+}
+
+// Dot Performs dot product between two vectors.
+func Dot(a, b Tuple) float64 {
+	return a.X*b.X + a.Y*b.Y + a.Z*b.Z + a.W*b.W
 }

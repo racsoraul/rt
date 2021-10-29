@@ -176,7 +176,10 @@ func TestScale(t *testing.T) {
 
 func TestDiv(t *testing.T) {
 	tuple := NewTuple(1, -2, 3, -4)
-	actual := Div(tuple, 2)
+	actual, err := Div(tuple, 2)
+	if err != nil {
+		t.Fatalf("Unexpected division by zero")
+	}
 	expected := NewTuple(0.5, -1, 1.5, -2)
 	if !actual.IsEqual(expected) {
 		t.Fatalf("got: %v; want: %v", actual, expected)
@@ -210,16 +213,62 @@ func TestMag(t *testing.T) {
 			math.Sqrt(14),
 		},
 		{
-			"magnitude of v(1,2,3)",
+			"magnitude of v(-1,-2,-3)",
 			NewVector(-1, -2, -3),
 			math.Sqrt(14),
 		},
 	}
 
 	for _, tc := range testCases {
-		actual := tc.input.Mag()
-		if actual != tc.expected {
-			t.Fatalf("got: %v; want: %v", actual, tc.expected)
-		}
+		t.Run(tc.name, func(t *testing.T) {
+			actual := tc.input.Mag()
+			if actual != tc.expected {
+				t.Fatalf("got: %v; want: %v", actual, tc.expected)
+			}
+		})
+	}
+}
+
+func TestNormalize(t *testing.T) {
+	testCases := []struct {
+		name            string
+		input, expected Tuple
+	}{
+		{
+			"normalize v(4,0,0)",
+			NewVector(4, 0, 0),
+			NewVector(1, 0, 0),
+		},
+		{
+			"normalize v(1,2,3)",
+			NewVector(1, 2, 3),
+			NewVector(0.26726, 0.53452, 0.80178),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := Normalize(tc.input)
+			if !actual.IsEqual(tc.expected) {
+				t.Fatalf("got: %v; want: %v", actual, tc.expected)
+			}
+		})
+	}
+
+	// magnitude of a normalized vector
+	actual := Normalize(NewVector(1, 2, 3)).Mag()
+	expected := 1.0
+
+	if actual != expected {
+		t.Fatalf("got: %v; want: %v", actual, expected)
+	}
+}
+
+func TestDot(t *testing.T) {
+	actual := Dot(NewVector(1, 2, 3), NewVector(2, 3, 4))
+	expected := 20.0
+
+	if actual != expected {
+		t.Fatalf("got: %v; want: %v", actual, expected)
 	}
 }
