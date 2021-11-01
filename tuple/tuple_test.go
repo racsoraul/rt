@@ -272,3 +272,33 @@ func TestDot(t *testing.T) {
 		t.Fatalf("got: %v; want: %v", actual, expected)
 	}
 }
+
+func TestCross(t *testing.T) {
+	testCases := []struct {
+		name           string
+		inputA, inputB Tuple
+		expected       Tuple
+	}{
+		{
+			"v(1,2,3) x v(2,3,4)",
+			NewVector(1, 2, 3),
+			NewVector(2, 3, 4),
+			NewVector(-1, 2, -1),
+		},
+		{
+			"v(2,3,4) x v(1,2,3)",
+			NewVector(2, 3, 4),
+			NewVector(1, 2, 3),
+			NewVector(1, -2, 1),
+		},
+	}
+
+	for _, tc := range testCases {
+		t.Run(tc.name, func(t *testing.T) {
+			actual := Cross(tc.inputA, tc.inputB)
+			if !actual.IsEqual(tc.expected) {
+				t.Fatalf("got: %v; want: %v", actual, tc.expected)
+			}
+		})
+	}
+}
