@@ -33,7 +33,7 @@ func main() {
 	newPos := tick(env, p0)
 	fmt.Println(newPos)
 	// Keep ticking until hitting the ground.
-	for newPos.Position.Y >= 0 {
+	for newPos.Position[1] >= 0 {
 		newPos = tick(env, newPos)
 		fmt.Println(newPos)
 	}
