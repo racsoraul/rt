@@ -302,3 +302,61 @@ func TestCross(t *testing.T) {
 		})
 	}
 }
+
+func TestNewColor(t *testing.T) {
+	c := NewColor(-0.5, 0.4, 1.7)
+	if !equalFloat(c[0], -0.5) {
+		t.Errorf("R value is %v. Expected value was -0.5\n", c[0])
+	}
+	if !equalFloat(c[1], 0.4) {
+		t.Errorf("G value is %v. Expected value was 0.4\n", c[1])
+	}
+	if !equalFloat(c[2], 1.7) {
+		t.Errorf("B value is %v. Expected value was 1.7\n", c[2])
+	}
+}
+
+func TestColorOperations(t *testing.T) {
+	c1 := NewColor(0.9, 0.6, 0.75)
+	c2 := NewColor(0.7, 0.1, 0.25)
+	expected := NewColor(1.6, 0.7, 1)
+	actual, err := Add(c1, c2)
+	if err != nil {
+		t.Fatalf("error adding colors: %v", err)
+	}
+	if actual != expected {
+		t.Errorf("got: %v; wanted: %v", actual, expected)
+	}
+
+	expected = NewColor(0.2, 0.5, 0.5)
+	actual, err = Sub(c1, c2)
+	for i, val := range actual {
+		if !equalFloat(val, expected[i]) {
+			t.Errorf("got: %v; wanted: %v", actual, expected)
+			break
+		}
+	}
+
+	color := NewColor(0.2, 0.3, 0.4)
+	expected = NewColor(0.4, 0.6, 0.8)
+	actual = Scale(color, 2)
+	if err != nil {
+		t.Fatalf("error multiplying colors: %v", err)
+	}
+	if actual != expected {
+		t.Errorf("got: %v; wanted: %v", actual, expected)
+	}
+}
+
+func TestHadamardProduct(t *testing.T) {
+	c1 := NewColor(1, 0.2, 0.4)
+	c2 := NewColor(0.9, 1, 0.1)
+	expected := NewColor(0.9, 0.2, 0.04)
+	actual := HadamardProduct(c1, c2)
+	for i, val := range actual {
+		if !equalFloat(val, expected[i]) {
+			t.Errorf("got: %v; wanted: %v", actual, expected)
+			break
+		}
+	}
+}
