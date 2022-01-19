@@ -7,5 +7,5 @@ func NewVector(x, y, z float64) Tuple {
 
 // IsVector Checks if tuple is a Vector.
 func (t Tuple) IsVector() bool {
-	return equalFloat(t[3], 0)
+	return EqualFloat(t[3], 0)
 }

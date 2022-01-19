@@ -25,12 +25,13 @@ func (t Tuple) String() string {
 	return fmt.Sprintf("[X: %g, Y: %g, Z: %g, W: %g]", t[0], t[1], t[2], t[3])
 }
 
-func equalFloat(a, b float64) bool {
+// EqualFloat Returns if float values are equal.
+func EqualFloat(a, b float64) bool {
 	return math.Abs(a-b) < rt.EPSILON
 }
 
 func (t Tuple) IsEqual(to Tuple) bool {
-	return equalFloat(t[0], to[0]) && equalFloat(t[1], to[1]) && equalFloat(t[2], to[2]) && equalFloat(t[3], to[3])
+	return EqualFloat(t[0], to[0]) && EqualFloat(t[1], to[1]) && EqualFloat(t[2], to[2]) && EqualFloat(t[3], to[3])
 }
 
 // Add Performs addition of two tuples. Valid operations are

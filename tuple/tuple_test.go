@@ -7,16 +7,16 @@ import (
 
 func TestIsPoint(t *testing.T) {
 	p := NewPoint(4.3, -4.2, 3.1)
-	if !equalFloat(p[0], 4.3) {
+	if !EqualFloat(p[0], 4.3) {
 		t.Errorf("tuple 'X' value is %v. Expected value was 4.3\n", p[0])
 	}
-	if !equalFloat(p[1], -4.2) {
+	if !EqualFloat(p[1], -4.2) {
 		t.Errorf("tuple 'Y' value is %v. Expected value was -4.2\n", p[1])
 	}
-	if !equalFloat(p[2], 3.1) {
+	if !EqualFloat(p[2], 3.1) {
 		t.Errorf("tuple 'Z' value is %v. Expected value was 3.1\n", p[2])
 	}
-	if !equalFloat(p[3], 1.0) {
+	if !EqualFloat(p[3], 1.0) {
 		t.Errorf("tuple 'W' value is %v. Expected value was 1\n", p[3])
 	}
 	if !p.IsPoint() {
@@ -26,16 +26,16 @@ func TestIsPoint(t *testing.T) {
 
 func TestIsVector(t *testing.T) {
 	v := NewVector(4.3, -4.2, 3.1)
-	if !equalFloat(v[0], 4.3) {
+	if !EqualFloat(v[0], 4.3) {
 		t.Errorf("tuple 'X' value is %v. Expected value was 4.3\n", v[0])
 	}
-	if !equalFloat(v[1], -4.2) {
+	if !EqualFloat(v[1], -4.2) {
 		t.Errorf("tuple 'Y' value is %v. Expected value was -4.2\n", v[1])
 	}
-	if !equalFloat(v[2], 3.1) {
+	if !EqualFloat(v[2], 3.1) {
 		t.Errorf("tuple 'Z' value is %v. Expected value was 3.1\n", v[2])
 	}
-	if !equalFloat(v[3], 0.0) {
+	if !EqualFloat(v[3], 0.0) {
 		t.Errorf("tuple 'W' value is %v. Expected value was 0\n", v[3])
 	}
 	if !v.IsVector() {
@@ -305,13 +305,13 @@ func TestCross(t *testing.T) {
 
 func TestNewColor(t *testing.T) {
 	c := NewColor(-0.5, 0.4, 1.7)
-	if !equalFloat(c[0], -0.5) {
+	if !EqualFloat(c[0], -0.5) {
 		t.Errorf("R value is %v. Expected value was -0.5\n", c[0])
 	}
-	if !equalFloat(c[1], 0.4) {
+	if !EqualFloat(c[1], 0.4) {
 		t.Errorf("G value is %v. Expected value was 0.4\n", c[1])
 	}
-	if !equalFloat(c[2], 1.7) {
+	if !EqualFloat(c[2], 1.7) {
 		t.Errorf("B value is %v. Expected value was 1.7\n", c[2])
 	}
 }
@@ -330,11 +330,8 @@ func TestColorOperations(t *testing.T) {
 
 	expected = NewColor(0.2, 0.5, 0.5)
 	actual, err = Sub(c1, c2)
-	for i, val := range actual {
-		if !equalFloat(val, expected[i]) {
-			t.Errorf("got: %v; wanted: %v", actual, expected)
-			break
-		}
+	if !actual.IsEqual(expected) {
+		t.Errorf("got: %v; wanted: %v", actual, expected)
 	}
 
 	color := NewColor(0.2, 0.3, 0.4)
@@ -353,10 +350,7 @@ func TestHadamardProduct(t *testing.T) {
 	c2 := NewColor(0.9, 1, 0.1)
 	expected := NewColor(0.9, 0.2, 0.04)
 	actual := HadamardProduct(c1, c2)
-	for i, val := range actual {
-		if !equalFloat(val, expected[i]) {
-			t.Errorf("got: %v; wanted: %v", actual, expected)
-			break
-		}
+	if !actual.IsEqual(expected) {
+		t.Errorf("got: %v; wanted: %v", actual, expected)
 	}
 }

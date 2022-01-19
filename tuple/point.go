@@ -7,5 +7,5 @@ func NewPoint(x, y, z float64) Tuple {
 
 // IsPoint Checks if tuple is a Point.
 func (t Tuple) IsPoint() bool {
-	return equalFloat(t[3], 1)
+	return EqualFloat(t[3], 1)
 }
