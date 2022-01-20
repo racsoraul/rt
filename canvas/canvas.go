@@ -31,7 +31,9 @@ func (c *Canvas) At(x, y int) tuple.Tuple {
 
 // WritePixel Writes a pixel at the given coordinates.
 func (c *Canvas) WritePixel(x, y int, color tuple.Tuple) {
-	c.pixels[x][y] = color
+	if x <= c.width && y <= c.height {
+		c.pixels[x][y] = color
+	}
 }
 
 // ToPPM Returns a Plain Portable Pixel Map format.

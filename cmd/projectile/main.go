@@ -2,6 +2,9 @@ package main
 
 import (
 	"fmt"
+	"log"
+	"os"
+	"rt/canvas"
 	"rt/tuple"
 )
 
@@ -27,15 +30,29 @@ func main() {
 	env := NewEnvironment(tuple.NewVector(0, -0.1, 0), tuple.NewVector(-0.01, 0, 0))
 	p0 := NewProjectile(
 		tuple.NewPoint(0, 1, 0),
-		tuple.Scale(tuple.Normalize(tuple.NewVector(1, 1, 0)), 5),
+		tuple.Scale(tuple.Normalize(tuple.NewVector(1, 1, 0)), 10),
 	)
+	const WIDTH, HEIGHT int = 1024, 260
+	c := canvas.NewCanvas(WIDTH, HEIGHT, 255)
 
-	newPos := tick(env, p0)
-	fmt.Println(newPos)
+	proj := tick(env, p0)
+	fmt.Println(proj)
 	// Keep ticking until hitting the ground.
-	for newPos.Position[1] >= 0 {
-		newPos = tick(env, newPos)
-		fmt.Println(newPos)
+	for proj.Position[1] >= 0 {
+		proj = tick(env, proj)
+		c.WritePixel(int(proj.Position[0]), HEIGHT-int(proj.Position[1]), tuple.NewColor(1, 0, 0))
+		fmt.Println(proj)
+	}
+
+	file, err := os.Create("projectile.ppm")
+	if err != nil {
+		log.Fatalln(err)
+	}
+	defer file.Close()
+
+	_, err = file.WriteString(c.ToPPM())
+	if err != nil {
+		log.Fatalln(err)
 	}
 }
 
