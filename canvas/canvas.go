@@ -68,35 +68,35 @@ func (c *Canvas) ToPPM() string {
 				line.WriteString(triplet)
 				continue
 			}
-			if line.Len()+len(r)+1 <= 70 {
-				line.WriteByte(' ')
-				line.WriteString(r)
-				if line.Len()+len(g)+1 <= 70 {
-					line.WriteByte(' ')
-					line.WriteString(g)
-					if line.Len()+len(b)+1 <= 70 {
-						line.WriteByte(' ')
-						line.WriteString(b)
-					} else {
-						content.WriteString(line.String())
-						content.WriteByte('\n')
-						line.Reset()
-						line.WriteString(b)
-						continue
-					}
-				} else {
-					content.WriteString(line.String())
-					content.WriteByte('\n')
-					line.Reset()
-					line.WriteString(fmt.Sprintf("%s %s", g, b))
-					continue
-				}
-			} else {
+			if line.Len()+len(r)+1 > 70 {
 				content.WriteString(line.String())
 				content.WriteByte('\n')
 				line.Reset()
 				line.WriteString(triplet)
+				continue
 			}
+			line.WriteByte(' ')
+			line.WriteString(r)
+
+			if line.Len()+len(g)+1 > 70 {
+				content.WriteString(line.String())
+				content.WriteByte('\n')
+				line.Reset()
+				line.WriteString(fmt.Sprintf("%s %s", g, b))
+				continue
+			}
+			line.WriteByte(' ')
+			line.WriteString(g)
+
+			if line.Len()+len(b)+1 > 70 {
+				content.WriteString(line.String())
+				content.WriteByte('\n')
+				line.Reset()
+				line.WriteString(b)
+				continue
+			}
+			line.WriteByte(' ')
+			line.WriteString(b)
 		}
 		content.WriteString(line.String())
 		content.WriteByte('\n')
