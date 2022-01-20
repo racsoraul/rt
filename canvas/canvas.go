@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"rt/tuple"
+	"strconv"
 	"strings"
 )
 
@@ -38,28 +39,68 @@ func (c *Canvas) ToPPM() string {
 	// Creates header of the PPM.
 	header := fmt.Sprintf("P3\n%d %d\n%d\n", c.width, c.height, c.maxColorValue)
 
-	var content strings.Builder
+	var content, line strings.Builder
 	content.WriteString(header)
 
 	// Initializes ranges to map pixel values.
 	originalRange := Range{0, 1}
 	newRange := Range{0, 255}
 
-	// Creates body of the PPM.
+	var triplet, r, g, b string
+
+	// Creates body of the image.
 	for y := 0; y < c.height; y++ {
 		for x := 0; x < c.width; x++ {
-			fmt.Fprintf(
-				&content,
-				"%d %d %d",
-				MapToRange(originalRange, newRange, clamp(c.pixels[x][y][0])),
-				MapToRange(originalRange, newRange, clamp(c.pixels[x][y][1])),
-				MapToRange(originalRange, newRange, clamp(c.pixels[x][y][2])),
-			)
-			if x != c.width-1 {
-				content.WriteString(" ")
+			r = strconv.Itoa(MapToRange(originalRange, newRange, clamp(c.pixels[x][y][0])))
+			g = strconv.Itoa(MapToRange(originalRange, newRange, clamp(c.pixels[x][y][1])))
+			b = strconv.Itoa(MapToRange(originalRange, newRange, clamp(c.pixels[x][y][2])))
+			triplet = fmt.Sprintf("%s %s %s", r, g, b)
+
+			if line.Len() == 70 {
+				content.WriteString(line.String())
+				content.WriteByte('\n')
+				line.Reset()
+			}
+			if line.Len()+len(triplet)+1 <= 70 {
+				if line.Len() != 0 {
+					line.WriteByte(' ')
+				}
+				line.WriteString(triplet)
+				continue
+			}
+			if line.Len()+len(r)+1 <= 70 {
+				line.WriteByte(' ')
+				line.WriteString(r)
+				if line.Len()+len(g)+1 <= 70 {
+					line.WriteByte(' ')
+					line.WriteString(g)
+					if line.Len()+len(b)+1 <= 70 {
+						line.WriteByte(' ')
+						line.WriteString(b)
+					} else {
+						content.WriteString(line.String())
+						content.WriteByte('\n')
+						line.Reset()
+						line.WriteString(b)
+						continue
+					}
+				} else {
+					content.WriteString(line.String())
+					content.WriteByte('\n')
+					line.Reset()
+					line.WriteString(fmt.Sprintf("%s %s", g, b))
+					continue
+				}
+			} else {
+				content.WriteString(line.String())
+				content.WriteByte('\n')
+				line.Reset()
+				line.WriteString(triplet)
 			}
 		}
-		content.WriteString("\n")
+		content.WriteString(line.String())
+		content.WriteByte('\n')
+		line.Reset()
 	}
 	return content.String()
 }
@@ -82,6 +123,6 @@ type Range struct {
 
 // MapToRange Maps n number that falls between old range and returns
 // a new number that falls between the new range.
-func MapToRange(old, new Range, n float64) int64 {
-	return int64(math.Round(new.Min + (n-old.Min)*(new.Max-new.Min)/(old.Max-old.Min)))
+func MapToRange(old, new Range, n float64) int {
+	return int(math.Round(new.Min + (n-old.Min)*(new.Max-new.Min)/(old.Max-old.Min)))
 }

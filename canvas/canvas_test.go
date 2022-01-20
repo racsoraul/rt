@@ -56,7 +56,7 @@ func TestCanvas_ToPPM(t *testing.T) {
 		header += "\n"
 	}
 	if header != expectedHeader {
-		t.Fatalf("want: %s; got: %s", expectedHeader, header)
+		t.Fatalf("want: \n%s;\ngot: \n%s;", expectedHeader, header)
 	}
 
 	content := ""
@@ -65,7 +65,7 @@ func TestCanvas_ToPPM(t *testing.T) {
 		content += "\n"
 	}
 	if content != expectedContent {
-		t.Fatalf("want: %s; got: %s", expectedContent, content)
+		t.Fatalf("want: \n%s;\ngot: \n%s;", expectedContent, content)
 	}
 }
 
@@ -74,7 +74,7 @@ func TestCanvas_MapToRange(t *testing.T) {
 		name                         string
 		inputNumber                  float64
 		inputOldRange, inputNewRange Range
-		expected                     int64
+		expected                     int
 	}{
 		{
 			name:          "5, [0,10] -> [10,20]",
@@ -96,8 +96,30 @@ func TestCanvas_MapToRange(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			actual := MapToRange(tc.inputOldRange, tc.inputNewRange, tc.inputNumber)
 			if actual != tc.expected {
-				t.Fatalf("got: %d; expected: %d", actual, tc.expected)
+				t.Fatalf("got: \n%d; expected: \n%d", actual, tc.expected)
 			}
 		})
+	}
+}
+
+func TestSplitLongLines(t *testing.T) {
+	c := NewCanvas(10, 2, 255)
+	pixel := tuple.NewColor(1, 0.8, 0.6)
+	for x := 0; x < c.width; x++ {
+		for y := 0; y < c.height; y++ {
+			c.WritePixel(x, y, pixel)
+		}
+	}
+	expected := `P3
+10 2
+255
+255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
+153 255 204 153 255 204 153 255 204 153 255 204 153
+255 204 153 255 204 153 255 204 153 255 204 153 255 204 153 255 204
+153 255 204 153 255 204 153 255 204 153 255 204 153
+`
+
+	if expected != c.ToPPM() {
+		t.Fatalf("want:\n %s;\ngot: \n%s;", expected, c.ToPPM())
 	}
 }
