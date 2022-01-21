@@ -2,7 +2,13 @@ test:
 	go test -race ./...
 
 buildProjectile:
-	go build -o ./projectile cmd/projectile/main.go && ./projectile
+	go build -o ./bin/projectile cmd/projectile/main.go
+
+buildBounce:
+	go build -o ./bin/bounce cmd/bounce/main.go
+
+buildAll: buildBounce buildProjectile
 
 clean:
-	rm ./projectile
+	rm -r ./bin
+	rm *.ppm
